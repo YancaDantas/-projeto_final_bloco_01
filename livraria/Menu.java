@@ -25,88 +25,39 @@ public class Menu {
         obras.cadastrarLivro(new Obras("O Iluminado", "Terror", "Stephen King", "Suma de Letras", 42.0));
         obras.cadastrarLivro(new Obras("It: A Coisa", "Terror", "Stephen King", "Suma de Letras", 55.0));
 
-
-
         Scanner leia = new Scanner(System.in);
         int opcao;
 
         while (true) {
-            System.out.println(" _____________________________________________________");
-            System.out.println("|                                                     |");
-            System.out.println("|                   LIVRARIA BECO D                   |");
-            System.out.println("|_____________________________________________________|");
-            System.out.println("|                                                     |");
-            System.out.println("|            1 - Consultar Livro por Nome             |");
-            System.out.println("|            2 - Consultar Livro por Gênero           |");
-            System.out.println("|            3 - Adicionar livro no Carrinho          |");
-            System.out.println("|            4 - Remover livro no Carrinho            |");
-            System.out.println("|            5 - Listar Livros                        |");
-            System.out.println("|            6 - Sair                                 |");
-            System.out.println("|_____________________________________________________|");
-            System.out.println("Entre com a opção desejada:                          ");
+            exibirMenu();
 
             try {
                 opcao = leia.nextInt();
+                leia.nextLine(); 
             } catch (InputMismatchException e) {
                 System.out.println("Entre com um número do menu!");
-                leia.nextLine();
+                leia.nextLine(); 
                 opcao = 0;
             }
 
             switch (opcao) {
                 case 1:
-                    System.out.println("Digite o nome do livro:");
-                    leia.nextLine(); 
-                    String nome = leia.nextLine();
-                    Livros livro = obras.buscarLivroPorNome(nome);
-                    if (livro != null) {
-                        System.out.println("Livro encontrado: " + livro.getNomeLivro());
-                    } else {
-                        System.out.println("Livro não encontrado!");
-                    }
+                    consultarLivroPorNome(obras, leia);
                     keypress();
                     break;
 
                 case 2:
-                    System.out.println("Digite o gênero desejado: (Romance, Suspense, Infantil, Fantasia, Fábula, Terror...)");
-                    leia.nextLine();
-                    String genero = leia.nextLine();
-                    var livrosPorGenero = obras.buscarLivrosPorGenero(genero);
-                    if (!livrosPorGenero.isEmpty()) {
-                        System.out.println("Livros encontrados no gênero '" + genero + "':");
-                        for (Livros l : livrosPorGenero) {
-                            System.out.println("- " + l.getNomeLivro());
-                        }
-                    } else {
-                        System.out.println("Nenhum livro encontrado no gênero '" + genero + "'.");
-                    }
+                    consultarLivrosPorGenero(obras, leia);
                     keypress();
                     break;
 
-
                 case 3:
-                    System.out.println("Digite o nome do livro para adicionar ao carrinho:");
-                    leia.nextLine(); 
-                    String nomeLivroAdicionar = leia.nextLine();
-                    Livros livroParaAdicionar = obras.buscarLivroPorNome(nomeLivroAdicionar);
-                    if (livroParaAdicionar != null) {
-                        obras.adicionarNoCarrinho(livroParaAdicionar);
-                    } else {
-                        System.out.println("Livro não encontrado!");
-                    }
+                    adicionarLivroNoCarrinho(obras, leia);
                     keypress();
                     break;
 
                 case 4:
-                    System.out.println("Digite o nome do livro para remover do carrinho:");
-                    leia.nextLine(); 
-                    String nomeLivroRemover = leia.nextLine();
-                    Livros livroParaRemover = obras.buscarLivroPorNome(nomeLivroRemover);
-                    if (livroParaRemover != null) {
-                        obras.removerDoCarrinho(livroParaRemover);
-                    } else {
-                        System.out.println("Livro não encontrado no carrinho!");
-                    }
+                    removerLivroDoCarrinho(obras, leia);
                     keypress();
                     break;
 
@@ -116,17 +67,102 @@ public class Menu {
                     break;
 
                 case 6:
+                    cadastrarNovoLivro(obras, leia);
+                    keypress();
+                    break;
+
+                case 7:
                     System.out.println("\nA Livraria BECO D agradece a sua preferência!");
-                    sobre();
-                    leia.close();
+                    leia.close(); 
                     System.exit(0);
                     break;
 
                 default:
-                    System.out.println("Opção inválida! Escolha uma opção de 1 a 5.");
+                    System.out.println("Opção inválida! Escolha uma opção de 1 a 7.");
                     break;
             }
         }
+    }
+
+    public static void exibirMenu() {
+        System.out.println(" _____________________________________________________");
+        System.out.println("|                                                     |");
+        System.out.println("|                   LIVRARIA BECO D                   |");
+        System.out.println("|_____________________________________________________|");
+        System.out.println("|                                                     |");
+        System.out.println("|            1 - Consultar Livro por Nome             |");
+        System.out.println("|            2 - Consultar Livro por Gênero           |");
+        System.out.println("|            3 - Adicionar livro no Carrinho          |");
+        System.out.println("|            4 - Remover livro no Carrinho            |");
+        System.out.println("|            5 - Listar Livros                        |");
+        System.out.println("|            6 - Cadastrar novo livro                 |");
+        System.out.println("|            7 - Sair                                 |");
+        System.out.println("|_____________________________________________________|");
+        System.out.println("Entre com a opção desejada:                          ");
+    }
+
+    public static void consultarLivroPorNome(livrariaController obras, Scanner leia) {
+        System.out.println("Digite o nome do livro:");
+        String nome = leia.nextLine();
+        Livros livro = obras.buscarLivroPorNome(nome);
+        if (livro != null) {
+            System.out.println("Livro encontrado: " + livro.getNomeLivro());
+        } else {
+            System.out.println("Livro não encontrado!");
+        }
+    }
+
+    public static void consultarLivrosPorGenero(livrariaController obras, Scanner leia) {
+        System.out.println("Digite o gênero desejado: (Romance, Suspense, Infantil, Fantasia, Fábula, Terror...)");
+        String genero = leia.nextLine();
+        var livrosPorGenero = obras.buscarLivrosPorGenero(genero);
+        if (!livrosPorGenero.isEmpty()) {
+            System.out.println("Livros encontrados no gênero '" + genero + "':");
+            for (Livros l : livrosPorGenero) {
+                System.out.println("- " + l.getNomeLivro());
+            }
+        } else {
+            System.out.println("Nenhum livro encontrado no gênero '" + genero + "'.");
+        }
+    }
+
+    public static void adicionarLivroNoCarrinho(livrariaController obras, Scanner leia) {
+        System.out.println("Digite o nome do livro para adicionar ao carrinho:");
+        String nomeLivroAdicionar = leia.nextLine();
+        Livros livroParaAdicionar = obras.buscarLivroPorNome(nomeLivroAdicionar);
+        if (livroParaAdicionar != null) {
+            obras.adicionarNoCarrinho(livroParaAdicionar);
+        } else {
+            System.out.println("Livro não encontrado!");
+        }
+    }
+
+    public static void removerLivroDoCarrinho(livrariaController obras, Scanner leia) {
+        System.out.println("Digite o nome do livro para remover do carrinho:");
+        String nomeLivroRemover = leia.nextLine();
+        Livros livroParaRemover = obras.buscarLivroPorNome(nomeLivroRemover);
+        if (livroParaRemover != null) {
+            obras.removerDoCarrinho(livroParaRemover);
+        } else {
+            System.out.println("Livro não encontrado no carrinho!");
+        }
+    }
+
+    public static void cadastrarNovoLivro(livrariaController obras, Scanner leia) {
+        System.out.println("Cadastro de Novo Livro:");
+        System.out.println("Digite o nome do livro:");
+        String nomeLivro = leia.nextLine();
+        System.out.println("Digite o gênero do livro:");
+        String generoLivro = leia.nextLine();
+        System.out.println("Digite o nome do autor do livro:");
+        String autorLivro = leia.nextLine();
+        System.out.println("Digite o nome da editora do livro:");
+        String editor = leia.nextLine();
+        System.out.println("Digite o valor do livro:");
+        double valor = leia.nextDouble();
+        leia.nextLine(); // Limpar o buffer de new line após o nextDouble()
+
+        obras.cadastrarLivro(new Obras(nomeLivro, generoLivro, autorLivro, editor, valor));
     }
 
     public static void keypress() {
@@ -136,9 +172,5 @@ public class Menu {
         } catch (Exception e) {
             System.out.println("Você pressionou uma tecla diferente de enter!");
         }
-    }
-
-    private static void sobre() {
-       
-    }
 }
+    }
